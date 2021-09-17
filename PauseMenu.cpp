@@ -45,7 +45,7 @@ void PauseMenu::render(sf::RenderTarget* target)
 
 	target->draw(this->menuText);
 
-	target->draw(this->logoSprite);
+//	target->draw(this->logoSprite);
 
 	for (auto& i : this->buttons)
 	{

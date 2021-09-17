@@ -72,8 +72,8 @@ void GameState::initPauseMenu()
 
 	this->pauseMenu = new PauseMenu(this->stateData->gfxSettings->resolution, this->font);
 
-	this->pauseMenu->addButton(gui::ButtonName::Resume, gui::percentIntoY(28.f, vm), gui::percentIntoX(12.f, vm), gui::percentIntoY(4.f, vm), gui::calculateCharSize(3.f, vm), "Resume");
-	this->pauseMenu->addButton(gui::ButtonName::Settings, gui::percentIntoY(36.f, vm), gui::percentIntoX(12.f, vm), gui::percentIntoY(4.f, vm), gui::calculateCharSize(3.f, vm), "Settings");
+	this->pauseMenu->addButton(gui::ButtonName::Resume, gui::percentIntoY(38.f, vm), gui::percentIntoX(12.f, vm), gui::percentIntoY(4.f, vm), gui::calculateCharSize(3.f, vm), "Resume");
+//	this->pauseMenu->addButton(gui::ButtonName::Settings, gui::percentIntoY(46.f, vm), gui::percentIntoX(12.f, vm), gui::percentIntoY(4.f, vm), gui::calculateCharSize(3.f, vm), "Settings");
 	this->pauseMenu->addButton(gui::ButtonName::Quit, gui::percentIntoY(54.f, vm), gui::percentIntoX(12.f, vm), gui::percentIntoY(4.f, vm), gui::calculateCharSize(3.f, vm), "Quit");
 }
 
@@ -165,8 +165,8 @@ GameState::GameState(StateData* state_data)
 	this->initDefferedRender();	
 	this->initKeybinds("Config/gamestate_keybinds.ini");
 	this->initFont(this->font, "Fonts/slkscr.ttf");
-	this->initTexture(Figure::PawnWhite, "Resources/Images/Sprites/Figures/PawnWhite.png");
-	this->initTexture(Figure::PawnBlack, "Resources/Images/Sprites/Figures/PawnBlack.png");
+	this->initTexture(Figure::PawnWhite, "Resources/Images/Sprites/Figures/Pawn_cyan.png");
+	this->initTexture(Figure::PawnBlack, "Resources/Images/Sprites/Figures/Pawn_red.png");
 	this->initPauseMenu();
 	this->initShaders();
 
@@ -202,6 +202,11 @@ GameState::~GameState()
 void GameState::switchTurn()
 {
 	// TO DO
+}
+
+void GameState::calculateMove()
+{
+	// AI move calculation
 }
 
 void GameState::updateView(const float& dt)
@@ -321,16 +326,77 @@ void GameState::updatePlayerInput(const float& dt)
 	}
 }
 
+void GameState::updateAI(const float& dt)
+{
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+	{
+		if (this->buttonPressed == false)
+		{
+			this->buttonPressed = true;
+
+			bool found = false;
+
+			for (uint32_t i = 0; i < this->figures; i++)
+			{
+				if (pawn[Team::White][i]->checkSelection(this->mousePositionView))
+				{
+					this->selectedPawn = this->pawn[Team::White][i];
+					this->selectedPawn->select();
+					this->chosenPosition = this->selectedPawn->getCenter();
+
+					this->lastSelectedIndex = i;
+
+					found = true;
+				}
+				else
+				{
+					this->pawn[Team::White][i]->unselect();
+				}
+			}
+
+			if (found == false)
+			{
+				this->selectedPawn = this->pawn[Team::White][lastSelectedIndex];
+				this->selectedPawn->select();
+				this->chosenPosition = this->selectedPawn->getCenter();
+			}
+		}
+	}
+	else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+	{
+		if (this->buttonPressed == false)
+		{
+			this->buttonPressed = true;
+
+			// Keeping only first 4 positions
+			this->allowedPositions.resize(this->positions);
+
+			for (auto& position : this->allowedPositions)
+			{
+				if (this->selector.getGlobalBounds().contains(position))
+				{
+					this->chosenPosition = this->selector.getCenter();
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		this->buttonPressed = false;
+	}
+}
+
 void GameState::updatePauseMenuButtons()
 {
 	if (this->pauseMenu->isButtonPressed(gui::ButtonName::Resume))
 	{
 		this->paused = false;
 	}
-	else if (this->pauseMenu->isButtonPressed(gui::ButtonName::Settings))
-	{
-		//
-	}
+//	else if (this->pauseMenu->isButtonPressed(gui::ButtonName::Settings))
+//	{
+//		//
+//	}
 	else if (this->pauseMenu->isButtonPressed(gui::ButtonName::Quit))
 	{
 		this->fadeScreen.fadeOut();
@@ -461,10 +527,12 @@ void GameState::updateMovement(const float& dt)
 //		sf::Vector2f dir = sf::Vector2f(this->chosenPosition) - this->selectedPawn->getCenter();
 //		sf::Vector2f dirNorm = dir / static_cast<float>(std::sqrt(std::pow(dir.x, 2) + std::pow(dir.y, 2)));
 
-		this->direction = sf::Vector2f(this->chosenPosition) - this->selectedPawn->getCenter();
+		this->direction = this->chosenPosition - this->selectedPawn->getCenter();
 		this->directionNormalized = this->direction / static_cast<float>(std::sqrt(std::pow(this->direction.x, 2) + std::pow(this->direction.y, 2)));
 
 		this->selectedPawn->move(this->directionNormalized.x, this->directionNormalized.y, dt);
+
+		this->pawn[Team::Black][this->randomizer.generate(0, this->figures - 1)]->move(static_cast<float>(this->randomizer.generate(-100., 100.)), static_cast<float>(this->randomizer.generate(-100., 100.)), dt);
 	}
 }
 
@@ -476,67 +544,6 @@ void GameState::updateFigures(const float& dt)
 		{
 			pawn[i][j]->update(this->mousePositionView, dt);
 		}
-	}
-}
-
-void GameState::updateAI(const float& dt)
-{
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-	{
-		if (this->buttonPressed == false)
-		{
-			this->buttonPressed = true;
-
-			bool found = false;
-
-			for (uint32_t i = 0; i < this->figures; i++)
-			{
-				if (pawn[Team::White][i]->checkSelection(this->mousePositionView))
-				{
-					this->selectedPawn = this->pawn[Team::White][i];
-					this->selectedPawn->select();
-					this->chosenPosition = this->selectedPawn->getCenter();
-
-					this->lastSelectedIndex = i;
-
-					found = true;
-				}
-				else
-				{
-					this->pawn[Team::White][i]->unselect();
-				}
-			}
-
-			if (found == false)
-			{
-				this->selectedPawn = this->pawn[Team::White][lastSelectedIndex];
-				this->selectedPawn->select();
-				this->chosenPosition = this->selectedPawn->getCenter();
-			}
-		}
-	}
-	else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
-	{
-		if (this->buttonPressed == false)
-		{
-			this->buttonPressed = true;
-
-			// Keeping only first 4 positions
-			this->allowedPositions.resize(this->positions);
-
-			for (auto& position : this->allowedPositions)
-			{
-				if (this->selector.getGlobalBounds().contains(position))
-				{
-					this->chosenPosition = this->selector.getCenter();
-					break;
-				}
-			}
-		}
-	}
-	else
-	{
-		this->buttonPressed = false;
 	}
 }
 

@@ -38,15 +38,20 @@ void MainMenuState::initBackground(const std::string file_path)
 //	this->container.setFillColor(sf::Color(0, 40, 80, 80));
 //	this->container.setPosition(sf::Vector2f(gui::percentIntoX(8.f, vm), gui::percentIntoY(12.f, vm)));
 
-	this->container.setPosition(0.f, gui::percentIntoY(70.f, vm));
-	this->container.setFillColor(sf::Color(0, 40, 80, 80));
+
+	this->container.setFillColor(sf::Color(0, 120, 160, 80));
 	this->container.setSize
 	(
 		sf::Vector2f
 		(
-			static_cast<float>(vm.width),
-			static_cast<float>(vm.height) / 9.f
+			static_cast<float>(vm.width) / 5.f,
+			static_cast<float>(vm.height) / 5.f
 		)
+	);
+	this->container.setPosition
+	(
+		(static_cast<float>(vm.width) / 2.f) - this->container.getSize().x / 2.f,
+		gui::percentIntoY(66.2f, vm)
 	);
 }
 
@@ -60,25 +65,25 @@ void MainMenuState::initGui()
 	// Buttons
 	this->buttons["GAME_STATE"] = new gui::Button
 	(
-		gui::percentIntoX(12.f, vm), gui::percentIntoY(73.f, vm),
+		gui::percentIntoX(43.8f, vm), gui::percentIntoY(70.f, vm),
 		gui::percentIntoX(12.f, vm), gui::percentIntoY(4.f, vm),
 		&this->font, "Start", gui::calculateCharSize(3.f, vm),
 		sf::Color::Transparent, sf::Color::Transparent, sf::Color::Transparent,
 		sf::Color(204, 204, 204), sf::Color(255, 235, 0), sf::Color(255, 100, 0)
 	);
 
-	this->buttons["SETTINGS_STATE"] = new gui::Button
-	(
-		gui::percentIntoX(32.f, vm), gui::percentIntoY(73.f, vm),
-		gui::percentIntoX(12.f, vm), gui::percentIntoY(4.f, vm),
-		&this->font, "Settings", gui::calculateCharSize(3.f, vm),
-		sf::Color::Transparent, sf::Color::Transparent, sf::Color::Transparent,
-		sf::Color(204, 204, 204), sf::Color(255, 235, 0), sf::Color(255, 100, 0)
-	);
+//	this->buttons["SETTINGS_STATE"] = new gui::Button
+//	(
+//		gui::percentIntoX(32.f, vm), gui::percentIntoY(73.f, vm),
+//		gui::percentIntoX(12.f, vm), gui::percentIntoY(4.f, vm),
+//		&this->font, "Settings", gui::calculateCharSize(3.f, vm),
+//		sf::Color::Red, sf::Color::Transparent, sf::Color::Transparent,
+//		sf::Color(204, 204, 204), sf::Color(255, 235, 0), sf::Color(255, 100, 0)
+//	);
 
 	this->buttons["EXIT_STATE"] = new gui::Button
 	(
-		gui::percentIntoX(72.f, vm), gui::percentIntoY(73.f, vm),
+		gui::percentIntoX(43.8f, vm), gui::percentIntoY(78.f, vm),
 		gui::percentIntoX(12.f, vm), gui::percentIntoY(4.f, vm),
 		&this->font, "Exit", gui::calculateCharSize(3.f, vm),
 		sf::Color::Transparent, sf::Color::Transparent, sf::Color::Transparent,
@@ -146,10 +151,10 @@ void MainMenuState::updateButtons(const float& dt)
 	}
 
 	// Settings
-	if (this->buttons["SETTINGS_STATE"]->isPressed() && this->getKeyTime())
-	{
-		// TO DO
-	}
+//	if (this->buttons["SETTINGS_STATE"]->isPressed() && this->getKeyTime())
+//	{
+//		// TO DO
+//	}
 
 	// Quit the game
 	if (this->buttons["EXIT_STATE"]->isPressed() && this->getKeyTime())

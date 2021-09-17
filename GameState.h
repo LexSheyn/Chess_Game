@@ -5,7 +5,6 @@
 #include "PauseMenu.h"
 #include "FadeScreen.h"
 #include "TileMap.h"
-#include "Pawn.h"
 
 enum Team : uint32_t
 {
@@ -78,16 +77,17 @@ public:
 // Functions:
 
     void switchTurn();
+    void calculateMove();
 
     void updateView(const float& dt);
     void updateInput(const float& dt);
     void updatePlayerInput(const float& dt);
+    void updateAI(const float& dt);
     void updatePauseMenuButtons();
     void uodateTileMap(const float& dt);
     void updateGui(const float& dt);
     void updateMovement(const float& dt);
     void updateFigures(const float& dt);
-    void updateAI(const float& dt);
     void update(const float& dt);
 
     void renderFigures();

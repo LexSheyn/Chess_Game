@@ -5,6 +5,7 @@
 #include "DropDownList.h"
 #include "ProgressBar.h"
 #include "SoundEngine.h"
+#include "Randomizer.h"
 #include "Entity.h"
 
 class State;
@@ -50,6 +51,8 @@ protected:
 	sf::Text mousePositionTextY;
 
 	sf::Text fpsCounterText;
+
+	Randomizer randomizer;
 
 // Resources:
 

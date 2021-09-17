@@ -168,6 +168,7 @@
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
+    <ClCompile Include="Randomizer.cpp" />
     <ClCompile Include="RegularTile.cpp" />
     <ClCompile Include="Selector.cpp" />
     <ClCompile Include="SoundEngine.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="ProgressBar.h" />
+    <ClInclude Include="Randomizer.h" />
     <ClInclude Include="RegularTile.h" />
     <ClInclude Include="Selector.h" />
     <ClInclude Include="SoundEngine.h" />
