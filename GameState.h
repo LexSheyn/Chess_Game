@@ -9,7 +9,7 @@
 enum Team : uint32_t
 {
     White = 0,
-    Black = 1
+    Black,
 };
 
 class GameState :
@@ -36,16 +36,29 @@ private:
     // Figures
     static const uint32_t teams = 2;
     static const uint32_t figures = 9;
+    static const size_t positions = 4;
+    // Current
     Pawn* pawn[teams][figures];
     sf::Vector2f chosenPosition;
     Pawn* selectedPawn;
-    uint32_t lastSelectedIndex;
-    static const size_t positions = 4;
+    uint32_t lastSelectedIndex;    
     std::vector<sf::Vector2f> allowedPositions;
-
-    // Moving directions
     sf::Vector2f direction;
     sf::Vector2f directionNormalized;
+    // TEST
+    sf::Vector2f chosenPositionTest[teams];
+    Pawn* selectedPawnTest[teams];
+    uint32_t lastSelectedIndexTest[teams];
+    std::vector<sf::Vector2f> allowedPositionsTest[teams];
+    sf::Vector2f directionTest[teams];
+    sf::Vector2f directionNormalizedTest[teams];
+
+    // Turn
+    uint32_t turn;
+    uint32_t turnLast;
+    sf::Clock timer;
+    float timerMax;
+    // TO DO variable for switch turn
 
     // Map
     TileMap* tileMap;
@@ -76,17 +89,21 @@ public:
 
 // Functions:
 
+    void endTurn();
     void switchTurn();
-    void calculateMove();
 
     void updateView(const float& dt);
     void updateInput(const float& dt);
     void updatePlayerInput(const float& dt);
-    void updateAI(const float& dt);
+    void updateInputAI(const float& dt);
+    void updateTimer();
     void updatePauseMenuButtons();
     void uodateTileMap(const float& dt);
+    void updateAllowedMovement(const float& dt);
+    void updateAllowedMovementAI(const float& dt);
     void updateGui(const float& dt);
     void updateMovement(const float& dt);
+    void updateMovementAI(const float& dt);
     void updateFigures(const float& dt);
     void update(const float& dt);
 

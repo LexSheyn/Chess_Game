@@ -88,7 +88,7 @@ void RegularTile::render(sf::RenderTarget* target, sf::Shader* shader, const sf:
 		}
 		else
 		{
-			target->draw(this->unavailableFrame);
+		//	target->draw(this->unavailableFrame);
 		}
 	}
 }
