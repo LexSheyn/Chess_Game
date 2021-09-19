@@ -24,6 +24,7 @@ private:
 	void initVariables();
 	void initBackground(const std::string file_path);
 	void initGui();
+	void initSound();
 
 	void resetGui();
 
@@ -38,6 +39,7 @@ public:
 
 	void updateInput(const float& dt);
 	void updateButtons(const float& dt);
+	void updateSound(const float& dt);
 	void update(const float& dt);
 
 	void renderButtons(sf::RenderTarget* target);

@@ -12,8 +12,8 @@ void sfx::SoundEngine::initVariables()
 // Music:
 
 	this->musicVolume = 0.5f;
-	this->fadeStep = 0.007f;
-	this->fadeRate = 1.f;
+	this->fadeStep = 0.5f;
+	this->fadeRate = 0.f;
 }
 
 void sfx::SoundEngine::initSoundSystem()
@@ -173,7 +173,7 @@ void sfx::SoundEngine::increaseMusicVolume(const float& value)
 
 void sfx::SoundEngine::fade(const float& fade_step)
 {
-	this->fadeRate += fadeStep;
+	this->fadeRate += fade_step;
 
 	if (this->fadeRate > 1.f)
 	{
@@ -239,21 +239,21 @@ void sfx::SoundEngine::setPosition(const sfx::Music name, const unsigned int mil
 	this->musicChannels[static_cast<unsigned int>(name)]->setPosition(milliseconds, FMOD_TIMEUNIT_MS);
 }
 
-void sfx::SoundEngine::fadeIn()
+void sfx::SoundEngine::fadeIn(const float& dt)
 {
 	if (this->getFadeRate() != 1)
 	{
-		this->fade(this->fadeStep);
+		this->fade(this->fadeStep * dt);
 	}
 
 //	this->pause(index, false);
 }
 
-void sfx::SoundEngine::fadeOut()
+void sfx::SoundEngine::fadeOut(const float& dt)
 {
 	if (this->getFadeRate() != 0)
 	{
-		this->fade(-this->fadeStep);
+		this->fade(-this->fadeStep * dt);
 	//	this->pause(index, false);
 	}
 	else

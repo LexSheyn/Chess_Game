@@ -23,7 +23,7 @@ namespace gui
 
 	// Constructors and Destructor:
 
-		FadeScreen(StateData* state_data, sf::Color color, const float speed = 1.f);
+		FadeScreen(StateData* state_data, sf::Color color, const float speed = 0.5f);
 		~FadeScreen();
 
 	// Accessors:

@@ -50,9 +50,11 @@ protected:
 	sf::Text mousePositionTextX;
 	sf::Text mousePositionTextY;
 
-	sf::Text fpsCounterText;
-
 	Randomizer randomizer;
+
+	sfx::SoundEngine soundEngine;
+
+	sf::Text fpsCounterText;	
 
 // Resources:
 

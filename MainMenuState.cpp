@@ -8,7 +8,6 @@ void MainMenuState::initVariables()
 	this->shutDown = false;
 }
 
-//Should use '../' before the file path to be able to play the game without Visual Studio.
 void MainMenuState::initBackground(const std::string file_path)
 {
 	sf::VideoMode vm = this->stateData->gfxSettings->resolution;
@@ -32,12 +31,6 @@ void MainMenuState::initBackground(const std::string file_path)
 	{
 		this->background.setTexture(&this->backgroundTexture);
 	}
-
-	//Container initialization
-//	this->container.setSize(sf::Vector2f(gui::percentIntoX(22.f, vm), gui::percentIntoY(56.f, vm)));
-//	this->container.setFillColor(sf::Color(0, 40, 80, 80));
-//	this->container.setPosition(sf::Vector2f(gui::percentIntoX(8.f, vm), gui::percentIntoY(12.f, vm)));
-
 
 	this->container.setFillColor(sf::Color(0, 120, 160, 80));
 	this->container.setSize
@@ -91,6 +84,17 @@ void MainMenuState::initGui()
 	);
 }
 
+void MainMenuState::initSound()
+{
+	// SFX
+	this->soundEngine.initSound(sfx::Sound::Button_Positive, "Resources/Sounds/Button_Positive.mp3");
+	this->soundEngine.initSound(sfx::Sound::Button_Negative, "Resources/Sounds/Button_Negative.mp3");
+	this->soundEngine.initSound(sfx::Sound::Button_Hover, "Resources/Sounds/Button_Hover.mp3");
+
+	// Music
+	this->soundEngine.initMusic(sfx::Music::Menu, "Resources/Music/Menu.mp3");
+}
+
 //Clears the GUI elements and reinitializes the GUI.
 //@return void
 void MainMenuState::resetGui()
@@ -114,8 +118,10 @@ MainMenuState::MainMenuState(StateData* state_data)
 	this->initFont(this->font, "Fonts/slkscr.ttf");
 	this->initKeybinds("Config/mainmenustate_keybinds.ini");
 	this->initGui();
+	this->initSound();
 
 	this->fadeScreen.fadeIn();
+	this->soundEngine.playMusic(sfx::Music::Menu);
 }
 
 MainMenuState::~MainMenuState()
@@ -164,6 +170,12 @@ void MainMenuState::updateButtons(const float& dt)
 	}
 }
 
+void MainMenuState::updateSound(const float& dt)
+{
+//	this->soundEngine.fadeIn();
+	this->soundEngine.update(dt);
+}
+
 void MainMenuState::update(const float& dt)
 {
 	this->fadeScreen.update(dt);
@@ -177,15 +189,22 @@ void MainMenuState::update(const float& dt)
 
 	if (this->shutDown)
 	{
+		this->soundEngine.fadeOut(dt);
+
 		if (this->fadeScreen.isOpaque())
 		{
 			this->endState();
 		}
 	}
+	else
+	{
+		this->soundEngine.fadeIn(dt);
+	}
 
 	// Debug:
 	this->updateFpsCounter(dt);
 	this->updateMousePositionText();
+	this->updateSound(dt);
 }
 
 void MainMenuState::renderButtons(sf::RenderTarget* target)

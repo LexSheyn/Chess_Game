@@ -7,15 +7,16 @@ namespace sfx
 	// 0-31
 	enum class Sound : unsigned int
 	{
-		ButtonPress = 0,
-		ButtonRelease,
+		Button_Positive = 0,
+		Button_Negative,
+		Button_Hover,
 		SOUND_MAX = sfx::ChannelsMax - 1u
 	};
 
 	// 0-31
 	enum class Music : unsigned int
 	{
-		MainMenu = 0,
+		Menu = 0,
 		Ambient,
 		MUSIC_MAX = sfx::ChannelsMax - 1u
 	};
@@ -105,14 +106,14 @@ namespace sfx
 		// @param	const unsigned int& index		Index associated with music file.
 		// @param	const char* file_path		Actual file path.
 		void initMusic(const sfx::Music name, const char* file_path);
-		void playMusic(const sfx::Music name, const bool looped, const bool paused);
+		void playMusic(const sfx::Music name, const bool looped = true, const bool paused = false);
 
 		void pause(const sfx::Music name);
 		void unpause(const sfx::Music name);
 		void stop(const sfx::Music name);
 		void setPosition(const sfx::Music name, const unsigned int milliseconds);
-		void fadeIn();
-		void fadeOut();
+		void fadeIn(const float& dt);
+		void fadeOut(const float& dt);
 
 		void updateSfxVolume();
 		void updateMusicVolume();
