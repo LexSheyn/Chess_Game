@@ -8,15 +8,18 @@ void GameState::initVariables()
 	this->buttonPressed = false;
 	this->gameOver = false;
 
-	this->selectedPawn = nullptr;
-	this->lastSelectedIndex = 0;
+	this->selectedPawn[Team::White] = nullptr;
+	this->selectedPawn[Team::Black] = nullptr;
+	this->lastSelectedIndex[Team::White] = 0;
+	this->lastSelectedIndex[Team::Black] = 0;
 
 	// Allowed positions
-	this->allowedPositions.resize(this->positions);
-//	this->allowedPositionsTest[Team::Black].resize(this->positions);
+	this->allowedPositions[Team::White].resize(this->positions);
 
-	this->direction = sf::Vector2f();
-	this->directionNormalized = sf::Vector2f();
+	this->direction[Team::White] = sf::Vector2f();
+	this->direction[Team::Black] = sf::Vector2f();
+	this->directionNormalized[Team::White] = sf::Vector2f();
+	this->directionNormalized[Team::Black] = sf::Vector2f();
 
 	// Turn
 	this->turn = Team::White;
@@ -109,18 +112,11 @@ void GameState::initFigures()
 	}
 
 	// First selected pawn White
-	this->selectedPawn = this->pawn[0][0];
-	this->selectedPawn->select();
-	this->chosenPosition = this->selectedPawn->getCenter();
+	this->selectedPawn[Team::White] = this->pawn[0][0];
+	this->selectedPawn[Team::White]->select();
+	this->chosenPosition[Team::White] = this->selectedPawn[Team::White]->getCenter();
 
-	this->lastSelectedIndex = 0;
-
-	// First selected pawn Black
-//	this->selectedPawnTest[Team::Black] = this->pawn[Team::Black][8];
-//	this->selectedPawnTest[Team::Black]->select();
-//	this->chosenPositionTest[Team::Black] = this->selectedPawnTest[Team::Black]->getCenter();
-//
-//	this->lastSelectedIndexTest[Team::Black] = 0;
+	this->lastSelectedIndex[Team::White] = 0;
 }
 
 void GameState::initTileMap()
@@ -290,8 +286,6 @@ void GameState::updateInput(const float& dt)
 
 void GameState::updatePlayerInput(const float& dt)
 {
-	this->updateAllowedMovement(dt);
-
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
 		if (this->buttonPressed == false)
@@ -304,12 +298,12 @@ void GameState::updatePlayerInput(const float& dt)
 			{
 				if (pawn[Team::White][i]->checkSelection(this->mousePositionView))
 				{
-					this->selectedPawn = this->pawn[Team::White][i];
-					this->selectedPawn->select();
+					this->selectedPawn[Team::White] = this->pawn[Team::White][i];
+					this->selectedPawn[Team::White]->select();
 
-					this->chosenPosition = this->selectedPawn->getCenter();
+					this->chosenPosition[Team::White] = this->selectedPawn[Team::White]->getCenter();
 
-					this->lastSelectedIndex = i;
+					this->lastSelectedIndex[Team::White] = i;
 
 					found = true;
 				}
@@ -321,9 +315,9 @@ void GameState::updatePlayerInput(const float& dt)
 
 			if (found == false)
 			{
-				this->selectedPawn = this->pawn[Team::White][lastSelectedIndex];
-				this->selectedPawn->select();
-				this->chosenPosition = this->selectedPawn->getCenter();
+				this->selectedPawn[Team::White] = this->pawn[Team::White][this->lastSelectedIndex[Team::White]];
+				this->selectedPawn[Team::White]->select();
+				this->chosenPosition[Team::White] = this->selectedPawn[Team::White]->getCenter();
 			}
 		}
 	}
@@ -333,11 +327,11 @@ void GameState::updatePlayerInput(const float& dt)
 		{
 			this->buttonPressed = true;
 
-			for (auto& position : this->allowedPositions)
+			for (auto& position : this->allowedPositions[Team::White])
 			{
 				if (this->selector.getGlobalBounds().contains(position))
 				{
-					this->chosenPosition = this->selector.getCenter();
+					this->chosenPosition[Team::White] = this->selector.getCenter();
 
 					this->endTurn();
 
@@ -358,14 +352,14 @@ void GameState::updateInputAI(const float& dt)
 	{
 		uint32_t index = this->randomizer.generate(0, this->figures - 1);
 
-		this->selectedPawnTest[Team::Black] = this->pawn[Team::Black][index];
-		this->selectedPawnTest[Team::Black]->select();
+		this->selectedPawn[Team::Black] = this->pawn[Team::Black][index];
+		this->selectedPawn[Team::Black]->select();
 
 		this->updateAllowedMovementAI(dt);
 
-		this->chosenPositionTest[Team::Black] = this->selectedPawnTest[Team::Black]->getCenter();
+		this->chosenPosition[Team::Black] = this->selectedPawn[Team::Black]->getCenter();
 
-		this->lastSelectedIndexTest[Team::Black] = index; // Maybe pointless
+		this->lastSelectedIndex[Team::Black] = index; // Maybe pointless
 
 		// Updating tiles availability
 		for (int32_t x = 0; x < this->tileMap->getMaxSizeGrid().x; x++)
@@ -376,16 +370,16 @@ void GameState::updateInputAI(const float& dt)
 
 				if (this->tileMap->getTile(x, y)->isAvailable())
 				{
-					this->allowedPositionsTest[Team::Black].push_back(this->tileMap->getTile(x, y)->getCenter());
+					this->allowedPositions[Team::Black].push_back(this->tileMap->getTile(x, y)->getCenter());
 				}
 			}
 		}
 
-		if (!this->allowedPositionsTest[Team::Black].empty())
+		if (!this->allowedPositions[Team::Black].empty())
 		{
-			this->chosenPositionTest[Team::Black] = this->allowedPositionsTest[Team::Black][this->randomizer.generate(0, this->allowedPositionsTest[Team::Black].size() - 1)];
+			this->chosenPosition[Team::Black] = this->allowedPositions[Team::Black][this->randomizer.generate(0, this->allowedPositions[Team::Black].size() - 1)];
 
-			this->allowedPositionsTest[Team::Black].clear();
+			this->allowedPositions[Team::Black].clear();
 
 			this->endTurn();
 
@@ -432,7 +426,7 @@ void GameState::uodateTileMap(const float& dt)
 		}
 	}
 
-	this->tileMap->updateTiles(this->selectedPawn, dt);
+	this->tileMap->updateTiles(this->selectedPawn[Team::White], dt);
 
 	// Capturing White
 	for (uint32_t i = 0; i < this->tiles; i++)
@@ -504,20 +498,20 @@ void GameState::updateAllowedMovement(const float& dt)
 			this->tileMap->getTile(x, y)->setShowAvailable();
 
 			// White
-			if (counter > 0 || (this->tileMap->getTile(x, y)->getDistance(this->selectedPawn) > this->gridSize))
+			if (counter > 0 || (this->tileMap->getTile(x, y)->getDistance(this->selectedPawn[Team::White]) > this->gridSize))
 			{
 				this->tileMap->getTile(x, y)->setAvailable(false);
 			}
 			else
 			{
 				this->tileMap->getTile(x, y)->setAvailable();
-				this->allowedPositions.insert(this->allowedPositions.begin(), this->tileMap->getTile(x, y)->getCenter());
+				this->allowedPositions[Team::White].insert(this->allowedPositions[Team::White].begin(), this->tileMap->getTile(x, y)->getCenter());
 			}
 		}
 	}
 
 	// Resizing allowed positions vectors to maximum possible size
-	this->allowedPositions.resize(this->positions);
+	this->allowedPositions[Team::White].resize(this->positions);
 }
 
 void GameState::updateAllowedMovementAI(const float& dt)
@@ -552,10 +546,9 @@ void GameState::updateAllowedMovementAI(const float& dt)
 
 			this->tileMap->getTile(x, y)->setShowAvailable();
 
-			if (!unavailable && this->tileMap->getTile(x, y)->getDistance(this->selectedPawnTest[Team::Black]) <= this->gridSize)
+			if (!unavailable && this->tileMap->getTile(x, y)->getDistance(this->selectedPawn[Team::Black]) <= this->gridSize)
 			{
 				this->tileMap->getTile(x, y)->setAvailable();
-			//	this->allowedPositionsTest[Team::Black].insert(this->allowedPositionsTest[Team::Black].begin(), this->tileMap->getTile(x, y)->getCenter());
 			}
 			else
 			{
@@ -563,18 +556,13 @@ void GameState::updateAllowedMovementAI(const float& dt)
 			}
 		}
 	}
-
-	// Resizing allowed positions vectors to maximum possible size
-//	this->allowedPositionsTest[Team::Black].resize(this->positions);
 }
 
 void GameState::updateGui(const float& dt)
 {
 	this->selector.update(this->mousePositionGrid, dt);
 
-//	this->allowedPositions.resize(this->positions);
-
-	for (auto& position : this->allowedPositions)
+	for (auto& position : this->allowedPositions[Team::White])
 	{
 		if (this->selector.getGlobalBounds().contains(position))
 		{
@@ -590,38 +578,35 @@ void GameState::updateGui(const float& dt)
 
 void GameState::updateMovement(const float& dt)
 {
-	if (this->selectedPawn->getDistance(this->chosenPosition) < this->gridSize / 20.f)
+	if (this->selectedPawn[Team::White]->getDistance(this->chosenPosition[Team::White]) < this->gridSize / 20.f)
 	{
-		this->selectedPawn->setPosition(this->chosenPosition.x, this->chosenPosition.y, true);
-		this->chosenPosition = this->selectedPawn->getCenter();;
+		this->selectedPawn[Team::White]->setPosition(this->chosenPosition[Team::White].x, this->chosenPosition[Team::White].y, true);
+		this->chosenPosition[Team::White] = this->selectedPawn[Team::White]->getCenter();;
 	}
 	else
 	{
-		this->direction = this->chosenPosition - this->selectedPawn->getCenter();
-		this->directionNormalized = this->direction / static_cast<float>(std::sqrt(std::pow(this->direction.x, 2) + std::pow(this->direction.y, 2)));
+		this->direction[Team::White] = this->chosenPosition[Team::White] - this->selectedPawn[Team::White]->getCenter();
+		this->directionNormalized[Team::White] = this->direction[Team::White] / static_cast<float>(std::sqrt(std::pow(this->direction[Team::White].x, 2) + std::pow(this->direction[Team::White].y, 2)));
 
-		this->selectedPawn->move(this->directionNormalized.x, this->directionNormalized.y, dt);
+		this->selectedPawn[Team::White]->move(this->directionNormalized[Team::White].x, this->directionNormalized[Team::White].y, dt);
 	}
 }
 
 void GameState::updateMovementAI(const float& dt)
 {
-	if (this->selectedPawnTest[Team::Black])
+	if (this->selectedPawn[Team::Black])
 	{
-		if (this->selectedPawnTest[Team::Black]->getDistance(this->chosenPositionTest[Team::Black]) < this->gridSize / 20.f)
+		if (this->selectedPawn[Team::Black]->getDistance(this->chosenPosition[Team::Black]) < this->gridSize / 20.f)
 		{
-			this->selectedPawnTest[Team::Black]->setPosition(this->chosenPositionTest[Team::Black].x, this->chosenPositionTest[Team::Black].y, true);
-			this->chosenPositionTest[Team::Black] = this->selectedPawnTest[Team::Black]->getCenter();;
-
-			// TEST
-		//	this->turn = Team::White;
+			this->selectedPawn[Team::Black]->setPosition(this->chosenPosition[Team::Black].x, this->chosenPosition[Team::Black].y, true);
+			this->chosenPosition[Team::Black] = this->selectedPawn[Team::Black]->getCenter();;
 		}
 		else
 		{
-			this->directionTest[Team::Black] = this->chosenPositionTest[Team::Black] - this->selectedPawnTest[Team::Black]->getCenter();
-			this->directionNormalizedTest[Team::Black] = this->directionTest[Team::Black] / static_cast<float>(std::sqrt(std::pow(this->directionTest[Team::Black].x, 2) + std::pow(this->directionTest[Team::Black].y, 2)));
+			this->direction[Team::Black] = this->chosenPosition[Team::Black] - this->selectedPawn[Team::Black]->getCenter();
+			this->directionNormalized[Team::Black] = this->direction[Team::Black] / static_cast<float>(std::sqrt(std::pow(this->direction[Team::Black].x, 2) + std::pow(this->direction[Team::Black].y, 2)));
 
-			this->selectedPawnTest[Team::Black]->move(this->directionNormalizedTest[Team::Black].x, this->directionNormalizedTest[Team::Black].y, dt);
+			this->selectedPawn[Team::Black]->move(this->directionNormalized[Team::Black].x, this->directionNormalized[Team::Black].y, dt);
 		}
 	}
 }
@@ -652,12 +637,17 @@ void GameState::update(const float& dt)
 			this->updateView(dt);
 			this->updateGui(dt);
 
-			if (this->turn == Team::White) // If White's turn
+			// Player
+			this->updateAllowedMovement(dt);
+
+			if (this->turn == Team::White)
 			{
+				// Player
 				this->updatePlayerInput(dt);
 			}
 			else if (this->turn == Team::Black)
 			{
+				// AI
 				this->updateInputAI(dt);
 			}
 
@@ -712,9 +702,9 @@ void GameState::render(sf::RenderTarget* target)
 	// Map
 	this->renderTexture.setView(this->view);
 
-	this->tileMap->render(&this->renderTexture, this->viewGridPosition, &this->coreShader, this->selectedPawn->getCenter());
+	this->tileMap->render(&this->renderTexture, this->viewGridPosition, &this->coreShader, this->selectedPawn[Team::White]->getCenter());
 
-	if (this->selectedPawn->isSelected())
+	if (this->selectedPawn[Team::White]->isSelected())
 	{		
 		this->selector.render(&this->renderTexture);
 	}
@@ -722,7 +712,7 @@ void GameState::render(sf::RenderTarget* target)
 	this->renderFigures();
 
 	// Deffered rendering
-	this->tileMap->renderDeffered(&this->renderTexture, &this->coreShader, this->selectedPawn->getCenter());
+	this->tileMap->renderDeffered(&this->renderTexture, &this->coreShader, this->selectedPawn[Team::White]->getCenter());
 
 	// Player GUI
 	this->renderTexture.setView(this->renderTexture.getDefaultView());

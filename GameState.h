@@ -37,28 +37,19 @@ private:
     static const uint32_t teams = 2;
     static const uint32_t figures = 9;
     static const size_t positions = 4;
-    // Current
-    Pawn* pawn[teams][figures];
-    sf::Vector2f chosenPosition;
-    Pawn* selectedPawn;
-    uint32_t lastSelectedIndex;    
-    std::vector<sf::Vector2f> allowedPositions;
-    sf::Vector2f direction;
-    sf::Vector2f directionNormalized;
-    // TEST
-    sf::Vector2f chosenPositionTest[teams];
-    Pawn* selectedPawnTest[teams];
-    uint32_t lastSelectedIndexTest[teams];
-    std::vector<sf::Vector2f> allowedPositionsTest[teams];
-    sf::Vector2f directionTest[teams];
-    sf::Vector2f directionNormalizedTest[teams];
+    Pawn* pawn[teams][figures];    
+    Pawn* selectedPawn[teams];
+    uint32_t lastSelectedIndex[teams];
+    sf::Vector2f chosenPosition[teams];    
+    std::vector<sf::Vector2f> allowedPositions[teams];
+    sf::Vector2f direction[teams];
+    sf::Vector2f directionNormalized[teams];
 
     // Turn
     uint32_t turn;
     uint32_t turnLast;
     sf::Clock timer;
     float timerMax;
-    // TO DO variable for switch turn
 
     // Map
     TileMap* tileMap;
