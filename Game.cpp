@@ -72,10 +72,16 @@ void Game::initStateData()
 	this->stateData.gridSize = this->gridSize;
 }
 
+void Game::initFadeScreen()
+{
+	this->fadeScreen.setSize(this->stateData.gfxSettings->resolution.width, this->stateData.gfxSettings->resolution.height);
+	this->fadeScreen.setFadeSpeed(1.f);
+}
+
 void Game::initStates()
 {
 	//Main menu
-	this->states.push(new MainMenuState(&this->stateData));
+	this->states.push(new MainMenuState(&this->stateData, &this->fadeScreen, &this->soundEngine));
 }
 
 Game::Game()
@@ -85,6 +91,7 @@ Game::Game()
 	this->initWindow();
 	this->initKeys("Config/supported_keys.ini");
 	this->initStateData();
+	this->initFadeScreen();
 	this->initStates();
 }
 

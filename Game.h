@@ -11,6 +11,8 @@ private:
 
 	GraphicsSettings gfxSettings;
 	StateData stateData;
+	gui::FadeScreen fadeScreen;
+	sfx::SoundEngine soundEngine;
 	sf::RenderWindow* window;
 	sf::Event sfEvent;
 
@@ -30,6 +32,7 @@ private:
 	void initWindow();
 	void initKeys(const std::string file_path);
 	void initStateData();
+	void initFadeScreen();
 	void initStates();
 
 public:

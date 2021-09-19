@@ -15,9 +15,11 @@ private:
 	sf::Font font;
 	bool shutDown;
 
-	std::map<std::string, gui::Button*> buttons;
+	bool start;
+	sf::Clock fadeTimer;
+	float fadeTimerMax;
 
-	gui::FadeScreen fadeScreen;
+	std::map<std::string, gui::Button*> buttons;
 
 // private: Functions:
 
@@ -32,14 +34,13 @@ public:
 
 // Constructors and Destructor:
 
-	MainMenuState(StateData* state_data);
+	MainMenuState(StateData* state_data, gui::FadeScreen* fade_screen, sfx::SoundEngine* sound_engine);
 	~MainMenuState();
 
 // Functions:
 
 	void updateInput(const float& dt);
 	void updateButtons(const float& dt);
-	void updateSound(const float& dt);
 	void update(const float& dt);
 
 	void renderButtons(sf::RenderTarget* target);

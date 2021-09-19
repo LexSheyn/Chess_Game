@@ -7,11 +7,11 @@ void sfx::SoundEngine::initVariables()
 {
 // SFX:
 
-	this->sfxVolume = 0.5f;
+	this->sfxVolume = 0.4f;
 
 // Music:
 
-	this->musicVolume = 0.5f;
+	this->musicVolume = 0.4f;
 	this->fadeStep = 1.f;
 	this->fadeRate = 0.f;
 }
@@ -232,6 +232,11 @@ void sfx::SoundEngine::unpause(const sfx::Music name)
 void sfx::SoundEngine::stop(const sfx::Music name)
 {
 	this->musicChannels[static_cast<unsigned int>(name)]->stop();
+}
+
+void sfx::SoundEngine::stop()
+{
+	this->masterGroup->stop();
 }
 
 void sfx::SoundEngine::setPosition(const sfx::Music name, const unsigned int milliseconds)

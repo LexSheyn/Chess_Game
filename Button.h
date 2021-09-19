@@ -2,7 +2,6 @@
 
 namespace gui
 {
-
 	enum class ButtonName
 	{
 		Start = 0,

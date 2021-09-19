@@ -3,10 +3,10 @@
 
 // Constructors and Destructor:
 
-gui::Selector::Selector(StateData* state_data)
-	: stateData(*state_data)
+gui::Selector::Selector(const float grid_size)
+	: gridSize(grid_size)
 {
-	this->selectorRectangle.setSize(sf::Vector2f(state_data->gridSize, state_data->gridSize));
+	this->selectorRectangle.setSize(sf::Vector2f(grid_size, grid_size));
 	this->selectorRectangle.setFillColor(sf::Color::Transparent);
 	this->selectorRectangle.setOutlineColor(sf::Color::Transparent);
 	this->selectorRectangle.setOutlineThickness(-4.f);
@@ -58,8 +58,8 @@ void gui::Selector::update(sf::Vector2i mouse_position_grid, const float& dt)
 {
 	this->selectorRectangle.setPosition
 	(
-		static_cast<float>(mouse_position_grid.x) * this->stateData.gridSize,
-		static_cast<float>(mouse_position_grid.y) * this->stateData.gridSize
+		static_cast<float>(mouse_position_grid.x) * this->gridSize,
+		static_cast<float>(mouse_position_grid.y) * this->gridSize
 	);
 }
 

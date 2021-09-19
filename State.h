@@ -4,9 +4,10 @@
 #include "Button.h"
 #include "DropDownList.h"
 #include "ProgressBar.h"
-#include "SoundEngine.h"
 #include "Randomizer.h"
-#include "Entity.h"
+#include "TileMap.h"
+#include "FadeScreen.h"
+#include "SoundEngine.h"
 
 class State;
 
@@ -30,6 +31,8 @@ protected:
 // Variables:
 
 	StateData* stateData;
+	gui::FadeScreen* fadeScreen;
+	sfx::SoundEngine* soundEngine;
 	std::stack<State*>* states;
 	sf::RenderWindow* window;
 	std::map<const std::string, int32_t>* supportedKeys;
@@ -52,8 +55,6 @@ protected:
 
 	Randomizer randomizer;
 
-	sfx::SoundEngine soundEngine;
-
 	sf::Text fpsCounterText;	
 
 // Resources:
@@ -72,7 +73,7 @@ public:
 
 // Constructors and Destructor:
 
-	State(StateData* state_data);
+	State(StateData* state_data, gui::FadeScreen* fade_screen, sfx::SoundEngine* sound_engine);
 	virtual ~State();
 
 // Accessors:
@@ -89,12 +90,13 @@ public:
 
 	void updateMousePositions(sf::View* view = nullptr);
 	void updateKeyTime(const float& dt);
-
-	virtual void updateInput(const float& dt) = 0;
-	virtual void update(const float& dt) = 0;
+	void updateSound(const float& dt);
 
 	void updateMousePositionText();
 	void updateFpsCounter(const float& dt);
+
+	virtual void updateInput(const float& dt) = 0;
+	virtual void update(const float& dt) = 0;
 
 	void renderMousePositionText(sf::RenderTarget* target);
 	void renderFpsCounter(sf::RenderTarget* target);

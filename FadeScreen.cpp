@@ -3,26 +3,22 @@
 
 // Constructors and Destructor:
 
-gui::FadeScreen::FadeScreen(StateData* state_data, sf::Color color, const float speed)
-	: stateData(*state_data)
+void gui::FadeScreen::initVariables()
 {
-	this->shape.setSize
-	(
-		sf::Vector2f
-		(
-			static_cast<float>(this->stateData.gfxSettings->resolution.width), 
-			static_cast<float>(this->stateData.gfxSettings->resolution.height)
-		)
-	);
-
+	this->shape.setSize(sf::Vector2f(100.f, 100.f));
 	this->shape.setPosition(0.f, 0.f);
-	this->shape.setFillColor(color);
+	this->shape.setFillColor(sf::Color::Black);
 
 	this->color = color;
 	this->alphaMultiplier = 1.f;
-	this->speed = speed;
+	this->speed = 1.f;
 	this->fade = false;
 	this->covered = false;
+}
+
+gui::FadeScreen::FadeScreen()
+{
+	this->initVariables();
 }
 
 gui::FadeScreen::~FadeScreen()
@@ -48,6 +44,26 @@ const bool gui::FadeScreen::isOpaque() const
 	}
 
 	return false;
+}
+
+void gui::FadeScreen::setSize(const float x, const float y)
+{
+	this->shape.setSize(sf::Vector2f(x, y));
+}
+
+void gui::FadeScreen::setSize(sf::Vector2f size)
+{
+	this->shape.setSize(size);
+}
+
+void gui::FadeScreen::setColor(sf::Color color)
+{
+	this->shape.setFillColor(color);
+}
+
+void gui::FadeScreen::setFadeSpeed(const float speed)
+{
+	this->speed = speed;
 }
 
 

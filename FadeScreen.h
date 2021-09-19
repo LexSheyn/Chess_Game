@@ -1,7 +1,5 @@
 #pragma once
 
-#include "State.h"
-
 namespace gui
 {
 	class FadeScreen
@@ -10,8 +8,6 @@ namespace gui
 
 	// Variables:
 
-		StateData& stateData;
-
 		sf::RectangleShape shape;
 		sf::Color color;
 		float alphaMultiplier;
@@ -19,17 +15,28 @@ namespace gui
 		bool fade;
 		bool covered;
 
+	// Functions:
+
+		void initVariables();
+
 	public:
 
 	// Constructors and Destructor:
 
-		FadeScreen(StateData* state_data, sf::Color color, const float speed = 1.f);
+		FadeScreen();
 		~FadeScreen();
 
 	// Accessors:
 
 		const bool isVisible() const;
 		const bool isOpaque() const;
+
+	// Modifiers:
+
+		void setSize(const float x, const float y);
+		void setSize(sf::Vector2f size);
+		void setColor(sf::Color color);
+		void setFadeSpeed(const float speed);
 
 	// Fucntions:
 

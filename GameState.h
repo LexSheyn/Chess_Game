@@ -3,8 +3,6 @@
 #include "State.h"
 #include "Selector.h"
 #include "PauseMenu.h"
-#include "FadeScreen.h"
-#include "TileMap.h"
 
 enum Team : uint32_t
 {
@@ -29,7 +27,6 @@ private:
     // GUI
     gui::Selector selector;
     PauseMenu* pauseMenu;
-    gui::FadeScreen fadeScreen;
 
     // Shader
     sf::Shader coreShader;
@@ -71,12 +68,13 @@ private:
     void initFigures();
     void initTileMap();
     void initGui();
+    void initSound();
 
 public:
 
 // Constructor and Destructor:
 
-    GameState(StateData* state_data);
+    GameState(StateData* state_data, gui::FadeScreen* fade_screen, sfx::SoundEngine* sound_engine);
     virtual ~GameState();
 
 // Functions:
@@ -89,7 +87,7 @@ public:
     void updatePlayerInput(const float& dt);
     void updateInputAI(const float& dt);
     void updateTimer();
-    void updatePauseMenuButtons();
+    void updatePauseMenuButtons(const float& dt);
     void uodateTileMap(const float& dt);
     void updateAllowedMovement(const float& dt);
     void updateAllowedMovementAI(const float& dt);

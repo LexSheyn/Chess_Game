@@ -1,7 +1,5 @@
 #pragma once
 
-#include "State.h"
-
 namespace gui
 {
 	class Selector
@@ -10,14 +8,14 @@ namespace gui
 
 	// Variables:
 
-		StateData& stateData;
 		sf::RectangleShape selectorRectangle;
+		float gridSize;
 
 	public:
 
 	// Constructors and Destructor:
 
-		Selector(StateData* state_data);
+		Selector(const float grid_size);
 		~Selector();
 
 	// Accessors:

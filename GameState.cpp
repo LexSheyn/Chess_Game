@@ -167,11 +167,18 @@ void GameState::initGui()
 	
 }
 
+void GameState::initSound()
+{
+	this->soundEngine->stop();
+	this->soundEngine->initMusic(sfx::Music::Tension, "Resources/Music/Tension.mp3");
+	this->soundEngine->playMusic(sfx::Music::Tension);
+}
+
 
 // Constructors and Destructor:
 
-GameState::GameState(StateData* state_data)
-	: State(state_data), fadeScreen(state_data, sf::Color::Black), selector(state_data)
+GameState::GameState(StateData* state_data, gui::FadeScreen* fade_screen, sfx::SoundEngine* sound_engine)
+	: State(state_data, fade_screen, sound_engine), selector(state_data->gridSize)
 {
 	this->initVariables();
 
@@ -188,7 +195,12 @@ GameState::GameState(StateData* state_data)
 	this->initGui();
 	this->initFigures();
 
-	this->fadeScreen.fadeIn();
+	// VFX
+	this->fadeScreen->setColor(sf::Color::Black);
+	this->fadeScreen->fadeIn();
+
+	// Music
+	this->initSound();
 }
 
 GameState::~GameState()
@@ -429,7 +441,7 @@ void GameState::updateTimer()
 	}
 }
 
-void GameState::updatePauseMenuButtons()
+void GameState::updatePauseMenuButtons(const float& dt)
 {
 	if (this->pauseMenu->isButtonPressed(gui::ButtonName::Resume))
 	{
@@ -595,14 +607,12 @@ void GameState::updateGui(const float& dt)
 	{
 		if (this->selector.getGlobalBounds().contains(position))
 		{
-		//	this->selector.setColor(sf::Color::Green);
 			this->selector.enable();
 			break;
 		}
 		else
 		{
 			this->selector.disable();
-		//	this->selector.setColor(sf::Color::Red);
 		}
 	}
 }
@@ -691,8 +701,8 @@ void GameState::updateGameOver(const float& dt)
 
 void GameState::update(const float& dt)
 {
-	this->fadeScreen.update(dt);
-	if (!this->fadeScreen.isVisible())
+	this->fadeScreen->update(dt);
+	if (!this->fadeScreen->isVisible())
 	{
 		this->updateMousePositions(&this->view);
 		this->updateKeyTime(dt);
@@ -729,7 +739,7 @@ void GameState::update(const float& dt)
 		else // Paused update
 		{
 			this->pauseMenu->update(this->mousePositionWindow, dt);
-			this->updatePauseMenuButtons();
+			this->updatePauseMenuButtons(dt);
 		}
 	}
 
@@ -737,16 +747,27 @@ void GameState::update(const float& dt)
 
 	if (this->gameOver)
 	{
-		this->fadeScreen.fadeOut();
+		this->fadeScreen->fadeOut();
+		this->soundEngine->fadeOut(dt);
 
-		if (this->fadeScreen.isOpaque())
+		if (this->fadeScreen->isOpaque())
 		{
+			this->fadeScreen->fadeIn();
+			this->soundEngine->stop();
+			this->soundEngine->playMusic(sfx::Music::Menu);
 			this->endState();
 		}
+	}
+	else
+	{
+		this->soundEngine->fadeIn(dt);
 	}
 
 	// Debug:
 	this->updateFpsCounter(dt);
+	
+	// Music and SFX
+	this->updateSound(dt);
 }
 
 void GameState::renderFigures()
@@ -796,7 +817,7 @@ void GameState::render(sf::RenderTarget* target)
 	}
 
 	// Fade screen
-	this->fadeScreen.render(&this->renderTexture);
+	this->fadeScreen->render(&this->renderTexture);
 
 	// Debug:
 	this->renderFpsCounter(&this->renderTexture);

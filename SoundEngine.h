@@ -17,7 +17,7 @@ namespace sfx
 	enum class Music : unsigned int
 	{
 		Menu = 0,
-		Ambient,
+		Tension,
 		MUSIC_MAX = sfx::ChannelsMax - 1u
 	};
 
@@ -111,6 +111,7 @@ namespace sfx
 		void pause(const sfx::Music name);
 		void unpause(const sfx::Music name);
 		void stop(const sfx::Music name);
+		void stop();
 		void setPosition(const sfx::Music name, const unsigned int milliseconds);
 		void fadeIn(const float& dt);
 		void fadeOut(const float& dt);

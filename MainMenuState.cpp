@@ -6,6 +6,9 @@
 void MainMenuState::initVariables()
 {
 	this->shutDown = false;
+
+	this->start = false;
+	this->fadeTimerMax = 1.f;
 }
 
 void MainMenuState::initBackground(const std::string file_path)
@@ -87,12 +90,13 @@ void MainMenuState::initGui()
 void MainMenuState::initSound()
 {
 	// SFX
-	this->soundEngine.initSound(sfx::Sound::Button_Positive, "Resources/Sounds/Button_Positive.mp3");
-	this->soundEngine.initSound(sfx::Sound::Button_Negative, "Resources/Sounds/Button_Negative.mp3");
-	this->soundEngine.initSound(sfx::Sound::Button_Hover, "Resources/Sounds/Button_Hover.mp3");
+	this->soundEngine->initSound(sfx::Sound::Button_Positive, "Resources/Sounds/Button_Positive.mp3");
+	this->soundEngine->initSound(sfx::Sound::Button_Negative, "Resources/Sounds/Button_Negative.mp3");
+	this->soundEngine->initSound(sfx::Sound::Button_Hover, "Resources/Sounds/Button_Hover.mp3");
 
 	// Music
-	this->soundEngine.initMusic(sfx::Music::Menu, "Resources/Music/Menu.mp3");
+	this->soundEngine->initMusic(sfx::Music::Menu, "Resources/Music/Menu.mp3");
+	this->soundEngine->playMusic(sfx::Music::Menu);
 }
 
 //Clears the GUI elements and reinitializes the GUI.
@@ -111,17 +115,20 @@ void MainMenuState::resetGui()
 
 //Constructors and Destructor:
 
-MainMenuState::MainMenuState(StateData* state_data)
-	: State(state_data), fadeScreen(state_data, sf::Color::Black)
+MainMenuState::MainMenuState(StateData* state_data, gui::FadeScreen* fade_screen, sfx::SoundEngine* sound_engine)
+	: State(state_data, fade_screen, sound_engine)
 {
 	this->initVariables();
 	this->initFont(this->font, "Fonts/slkscr.ttf");
 	this->initKeybinds("Config/mainmenustate_keybinds.ini");
 	this->initGui();
-	this->initSound();
 
-	this->fadeScreen.fadeIn();
-	this->soundEngine.playMusic(sfx::Music::Menu);
+	// VFX
+	this->fadeScreen->setColor(sf::Color::Black);
+	this->fadeScreen->fadeIn();
+
+	// Music
+	this->initSound();
 }
 
 MainMenuState::~MainMenuState()
@@ -153,7 +160,8 @@ void MainMenuState::updateButtons(const float& dt)
 	// New game
 	if (this->buttons["GAME_STATE"]->isPressed() && this->getKeyTime())
 	{
-		this->states->push(new GameState(this->stateData));
+		this->start = true;
+		this->fadeTimer.restart();
 	}
 
 	// Settings
@@ -165,21 +173,15 @@ void MainMenuState::updateButtons(const float& dt)
 	// Quit the game
 	if (this->buttons["EXIT_STATE"]->isPressed() && this->getKeyTime())
 	{
-		this->fadeScreen.fadeOut();
+		this->fadeScreen->fadeOut();
 		this->shutDown = true;
 	}
 }
 
-void MainMenuState::updateSound(const float& dt)
-{
-//	this->soundEngine.fadeIn();
-	this->soundEngine.update(dt);
-}
-
 void MainMenuState::update(const float& dt)
 {
-	this->fadeScreen.update(dt);
-	if (!this->fadeScreen.isVisible())
+	this->fadeScreen->update(dt);
+	if (!this->fadeScreen->isVisible())
 	{
 		this->updateMousePositions();
 		this->updateKeyTime(dt);
@@ -187,23 +189,37 @@ void MainMenuState::update(const float& dt)
 		this->updateButtons(dt);
 	}
 
+	if (this->start)
+	{
+		this->fadeScreen->fadeOut();
+		this->soundEngine->fadeOut(dt);
+
+		if (this->fadeTimer.getElapsedTime().asSeconds() >= this->fadeTimerMax)
+		{
+			this->start = false;
+			this->states->push(new GameState(this->stateData, this->fadeScreen, this->soundEngine));
+		}
+	}
+
 	if (this->shutDown)
 	{
-		this->soundEngine.fadeOut(dt);
+		this->soundEngine->fadeOut(dt);
 
-		if (this->fadeScreen.isOpaque())
+		if (this->fadeScreen->isOpaque())
 		{
 			this->endState();
 		}
 	}
-	else
+	
+	if (!this->start && !this->shutDown)
 	{
-		this->soundEngine.fadeIn(dt);
+		this->soundEngine->fadeIn(dt);
 	}
 
 	// Debug:
 	this->updateFpsCounter(dt);
-	this->updateMousePositionText();
+
+	// Music and SFX
 	this->updateSound(dt);
 }
 
@@ -227,9 +243,8 @@ void MainMenuState::render(sf::RenderTarget* target)
 
 	this->renderButtons(target);
 
-	this->fadeScreen.render(target);
+	this->fadeScreen->render(target);
 
 	// Debug:
 	this->renderFpsCounter(target);
-	this->renderMousePositionText(target);
 }

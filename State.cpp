@@ -73,9 +73,10 @@ void State::initFpsCounter()
 
 // Constructors and Destructor:
 
-State::State(StateData* state_data)
+State::State(StateData* state_data, gui::FadeScreen* fade_screen, sfx::SoundEngine* sound_engine)
+	: stateData(state_data), fadeScreen(fade_screen), soundEngine(sound_engine)
 {
-	this->stateData = state_data;
+//	this->stateData = state_data;
 	this->window = state_data->window;
 	this->supportedKeys = state_data->supportedKeys;
 	this->states = state_data->states;
@@ -144,26 +145,6 @@ void State::unpauseState()
 	this->paused = false;
 }
 
-void State::updateMousePositionText()
-{
-	// X
-	this->mousePositionTextX.setPosition(this->mousePositionView.x + 20.f, this->mousePositionView.y - 50.f);
-	std::stringstream ssX;
-	ssX << "x: " << this->mousePositionView.x;
-	this->mousePositionTextX.setString(ssX.str());
-
-	// Y
-	this->mousePositionTextY.setPosition(this->mousePositionView.x + 20.f, this->mousePositionView.y - 25.f);
-	std::stringstream ssY;
-	ssY << "y: " << this->mousePositionView.y;
-	this->mousePositionTextY.setString(ssY.str());
-}
-
-void State::updateFpsCounter(const float& dt)
-{
-	this->fpsCounterText.setString("FPS: " + std::to_string(static_cast<int>(1.f / dt)));
-}
-
 void State::updateMousePositions(sf::View* view)
 {
 	this->mousePositionScreen = sf::Mouse::getPosition();
@@ -190,6 +171,31 @@ void State::updateKeyTime(const float& dt)
 	{
 		this->keyTime += 100.f * dt;
 	}
+}
+
+void State::updateSound(const float& dt)
+{
+	this->soundEngine->update(dt);
+}
+
+void State::updateMousePositionText()
+{
+	// X
+	this->mousePositionTextX.setPosition(this->mousePositionView.x + 20.f, this->mousePositionView.y - 50.f);
+	std::stringstream ssX;
+	ssX << "x: " << this->mousePositionView.x;
+	this->mousePositionTextX.setString(ssX.str());
+
+	// Y
+	this->mousePositionTextY.setPosition(this->mousePositionView.x + 20.f, this->mousePositionView.y - 25.f);
+	std::stringstream ssY;
+	ssY << "y: " << this->mousePositionView.y;
+	this->mousePositionTextY.setString(ssY.str());
+}
+
+void State::updateFpsCounter(const float& dt)
+{
+	this->fpsCounterText.setString("FPS: " + std::to_string(static_cast<int>(1.f / dt)));
 }
 
 void State::renderMousePositionText(sf::RenderTarget* target)
