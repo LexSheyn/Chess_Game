@@ -32,6 +32,9 @@ namespace gui
 
 	// Functions:
 
+		void enable();
+		void disable();
+
 		void update(sf::Vector2i mouse_position_grid, const float& dt);
 		void render(sf::RenderTarget* target);
 	};

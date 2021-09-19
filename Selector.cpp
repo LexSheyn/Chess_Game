@@ -44,6 +44,16 @@ void gui::Selector::setColor(sf::Color color)
 
 // Functions:
 
+void gui::Selector::enable()
+{
+	this->selectorRectangle.setOutlineColor(sf::Color::Green);
+}
+
+void gui::Selector::disable()
+{
+	this->selectorRectangle.setOutlineColor(sf::Color::Red);
+}
+
 void gui::Selector::update(sf::Vector2i mouse_position_grid, const float& dt)
 {
 	this->selectorRectangle.setPosition

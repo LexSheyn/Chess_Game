@@ -10,6 +10,7 @@ enum Team : uint32_t
 {
     White = 0,
     Black,
+    None
 };
 
 class GameState :
@@ -96,6 +97,7 @@ public:
     void updateMovement(const float& dt);
     void updateMovementAI(const float& dt);
     void updateFigures(const float& dt);
+    void updateGameOver(const float& dt);
     void update(const float& dt);
 
     void renderFigures();

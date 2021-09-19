@@ -25,7 +25,7 @@ void GameState::initVariables()
 	this->turn = Team::White;
 	this->turnLast = this->turn;
 	this->timer.restart();
-	this->timerMax = 1.f;
+	this->timerMax = 0.6f; // Better to be 0.6f
 }
 
 void GameState::initDefferedRender()
@@ -227,7 +227,7 @@ void GameState::switchTurn()
 void GameState::endTurn()
 {
 	this->turnLast = this->turn;
-	this->turn = 2;
+	this->turn = Team::None;
 	this->timer.restart();
 }
 
@@ -375,15 +375,56 @@ void GameState::updateInputAI(const float& dt)
 			}
 		}
 
+		// Chosing position
 		if (!this->allowedPositions[Team::Black].empty())
 		{
-			this->chosenPosition[Team::Black] = this->allowedPositions[Team::Black][this->randomizer.generate(0, this->allowedPositions[Team::Black].size() - 1)];
+			uint32_t index_x = 0;
+			uint32_t index_y = 0;
+
+			for (size_t i = 0; i < this->allowedPositions[Team::Black].size(); i++)
+			{
+				if (this->allowedPositions[Team::Black][i].x > this->allowedPositions[Team::Black][0].x)
+				{
+					index_x = i;
+				}
+
+				if (this->allowedPositions[Team::Black][i].y > this->allowedPositions[Team::Black][0].y)
+				{
+					index_y = i;
+				}
+			}
+
+			int32_t chance = this->randomizer.generate(0, 100);
+
+			if (chance >= 0 && chance < 45)
+			{
+				this->chosenPosition[Team::Black] = this->allowedPositions[Team::Black][index_x];
+			}
+			else if (chance >= 45 && chance < 90)
+			{
+				this->chosenPosition[Team::Black] = this->allowedPositions[Team::Black][index_y];
+			}
+			else
+			{
+				this->chosenPosition[Team::Black] = this->allowedPositions[Team::Black][this->randomizer.generate(0, this->allowedPositions[Team::Black].size() - 1)];
+			}
 
 			this->allowedPositions[Team::Black].clear();
 
 			this->endTurn();
 
 			break;
+		}
+	}
+}
+
+void GameState::updateTimer()
+{
+	if (this->turn == Team::None)
+	{
+		if (this->timer.getElapsedTime().asSeconds() >= this->timerMax)
+		{
+			this->switchTurn();
 		}
 	}
 }
@@ -400,19 +441,7 @@ void GameState::updatePauseMenuButtons()
 //	}
 	else if (this->pauseMenu->isButtonPressed(gui::ButtonName::Quit))
 	{
-		this->fadeScreen.fadeOut();
 		this->gameOver = true;
-	}
-}
-
-void GameState::updateTimer()
-{
-	if (this->turn == 2)
-	{
-		if (this->timer.getElapsedTime().asSeconds() >= this->timerMax)
-		{
-			this->switchTurn();
-		}
 	}
 }
 
@@ -566,12 +595,14 @@ void GameState::updateGui(const float& dt)
 	{
 		if (this->selector.getGlobalBounds().contains(position))
 		{
-			this->selector.setColor(sf::Color::Green);
+		//	this->selector.setColor(sf::Color::Green);
+			this->selector.enable();
 			break;
 		}
 		else
 		{
-			this->selector.setColor(sf::Color::Red);
+			this->selector.disable();
+		//	this->selector.setColor(sf::Color::Red);
 		}
 	}
 }
@@ -622,6 +653,42 @@ void GameState::updateFigures(const float& dt)
 	}
 }
 
+void GameState::updateGameOver(const float& dt)
+{	
+	uint32_t counter[this->teams];
+	counter[Team::White] = 0;
+	counter[Team::Black] = 0;
+
+	// White
+	for (uint32_t i = 0; i < this->tiles; i++)
+	{
+		if (this->teamTile[Team::White][i]->isCaptured())
+		{
+			counter[Team::White]++;
+		}		
+	}
+
+	// Black
+	for (uint32_t i = 0; i < this->tiles; i++)
+	{
+		if (this->teamTile[Team::Black][i]->isCaptured())
+		{
+			counter[Team::Black]++;
+		}		
+	}
+
+	// Final check
+	if (counter[Team::White] >= this->figures)
+	{
+		this->gameOver = true;
+	}
+
+	if (counter[Team::Black] >= this->figures)
+	{		
+		this->gameOver = true;
+	}
+}
+
 void GameState::update(const float& dt)
 {
 	this->fadeScreen.update(dt);
@@ -666,8 +733,12 @@ void GameState::update(const float& dt)
 		}
 	}
 
+	this->updateGameOver(dt);
+
 	if (this->gameOver)
 	{
+		this->fadeScreen.fadeOut();
+
 		if (this->fadeScreen.isOpaque())
 		{
 			this->endState();

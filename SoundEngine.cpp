@@ -12,7 +12,7 @@ void sfx::SoundEngine::initVariables()
 // Music:
 
 	this->musicVolume = 0.5f;
-	this->fadeStep = 0.5f;
+	this->fadeStep = 1.f;
 	this->fadeRate = 0.f;
 }
 
