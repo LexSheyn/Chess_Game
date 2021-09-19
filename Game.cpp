@@ -74,7 +74,11 @@ void Game::initStateData()
 
 void Game::initFadeScreen()
 {
-	this->fadeScreen.setSize(this->stateData.gfxSettings->resolution.width, this->stateData.gfxSettings->resolution.height);
+	this->fadeScreen.setSize
+	(
+		static_cast<float>(this->stateData.gfxSettings->resolution.width), 
+		static_cast<float>(this->stateData.gfxSettings->resolution.height)
+	);
 	this->fadeScreen.setFadeSpeed(1.f);
 }
 
