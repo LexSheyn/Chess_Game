@@ -3,6 +3,7 @@
 #include "State.h"
 #include "Selector.h"
 #include "PauseMenu.h"
+#include "Caption.h"
 
 enum Team : uint32_t
 {
@@ -23,10 +24,13 @@ private:
     sf::Font font;
     bool buttonPressed;
     bool gameOver;
+    uint32_t wonTeam;
 
     // GUI
     gui::Selector selector;
     PauseMenu* pauseMenu;
+    gui::Caption textWin;
+    gui::Caption textLose;
 
     // Shader
     sf::Shader coreShader;
@@ -46,8 +50,10 @@ private:
     // Turn
     uint32_t turn;
     uint32_t turnLast;
-    sf::Clock timer;
-    float timerMax;
+    sf::Clock turnTimer;
+    float turnTimerMax;
+    sf::Clock exitTimer;
+    float exitTimerMax;
 
     // Map
     TileMap* tileMap;
@@ -86,7 +92,7 @@ public:
     void updateInput(const float& dt);
     void updatePlayerInput(const float& dt);
     void updateInputAI(const float& dt);
-    void updateTimer();
+    void updateTimerTurn();
     void updatePauseMenuButtons(const float& dt);
     void uodateTileMap(const float& dt);
     void updateAllowedMovement(const float& dt);
@@ -99,6 +105,7 @@ public:
     void update(const float& dt);
 
     void renderFigures();
+    void renderGui(sf::RenderTarget* target);
     void render(sf::RenderTarget* target = nullptr);
 };
 

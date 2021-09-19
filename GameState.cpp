@@ -7,6 +7,7 @@ void GameState::initVariables()
 {
 	this->buttonPressed = false;
 	this->gameOver = false;
+	this->wonTeam = Team::None;
 
 	this->selectedPawn[Team::White] = nullptr;
 	this->selectedPawn[Team::Black] = nullptr;
@@ -24,8 +25,10 @@ void GameState::initVariables()
 	// Turn
 	this->turn = Team::White;
 	this->turnLast = this->turn;
-	this->timer.restart();
-	this->timerMax = 0.6f; // Better to be 0.6f
+	this->turnTimer.restart();
+	this->turnTimerMax = 0.5f; // Better to be 0.5f
+	this->exitTimer.restart();
+	this->exitTimerMax = 2.f;
 }
 
 void GameState::initDefferedRender()
@@ -164,7 +167,21 @@ void GameState::initTileMap()
 
 void GameState::initGui()
 {
-	
+	sf::VideoMode vm = this->stateData->gfxSettings->resolution;
+
+	// Win
+	this->textWin.setPosition
+	(
+		static_cast<float>(vm.width / 2),
+		static_cast<float>(vm.height / 2)
+	);
+
+	// Lose
+	this->textLose.setPosition
+	(
+		static_cast<float>(vm.width / 2),
+		static_cast<float>(vm.height / 2)
+	);
 }
 
 void GameState::initSound()
@@ -178,7 +195,8 @@ void GameState::initSound()
 // Constructors and Destructor:
 
 GameState::GameState(StateData* state_data, gui::FadeScreen* fade_screen, sfx::SoundEngine* sound_engine)
-	: State(state_data, fade_screen, sound_engine), selector(state_data->gridSize)
+	: State(state_data, fade_screen, sound_engine), selector(state_data->gridSize), 
+	textWin(this->font, sf::Color::Yellow, "YOU WIN!"), textLose(this->font, sf::Color::Red, "YOU LOSE!")
 {
 	this->initVariables();
 
@@ -240,7 +258,7 @@ void GameState::endTurn()
 {
 	this->turnLast = this->turn;
 	this->turn = Team::None;
-	this->timer.restart();
+	this->turnTimer.restart();
 }
 
 void GameState::updateView(const float& dt)
@@ -430,11 +448,11 @@ void GameState::updateInputAI(const float& dt)
 	}
 }
 
-void GameState::updateTimer()
+void GameState::updateTimerTurn()
 {
 	if (this->turn == Team::None)
 	{
-		if (this->timer.getElapsedTime().asSeconds() >= this->timerMax)
+		if (this->turnTimer.getElapsedTime().asSeconds() >= this->turnTimerMax)
 		{
 			this->switchTurn();
 		}
@@ -687,14 +705,19 @@ void GameState::updateGameOver(const float& dt)
 		}		
 	}
 
-	// Final check
+	// Check Black team won
 	if (counter[Team::White] >= this->figures)
 	{
+		this->wonTeam = Team::Black;
+		this->textLose.show();
 		this->gameOver = true;
 	}
 
+	// Check White team won
 	if (counter[Team::Black] >= this->figures)
-	{		
+	{
+		this->wonTeam = Team::White;
+		this->textWin.show();
 		this->gameOver = true;
 	}
 }
@@ -728,7 +751,7 @@ void GameState::update(const float& dt)
 				this->updateInputAI(dt);
 			}
 
-			this->updateTimer();
+			this->updateTimerTurn();
 			this->uodateTileMap(dt);
 
 			// Pawns
@@ -755,11 +778,16 @@ void GameState::update(const float& dt)
 			this->fadeScreen->fadeIn();
 			this->soundEngine->stop();
 			this->soundEngine->playMusic(sfx::Music::Menu);
-			this->endState();
+
+			if (this->exitTimer.getElapsedTime().asSeconds() >= this->exitTimerMax)
+			{
+				this->endState();
+			}			
 		}
 	}
 	else
 	{
+		this->exitTimer.restart();
 		this->soundEngine->fadeIn(dt);
 	}
 
@@ -779,6 +807,18 @@ void GameState::renderFigures()
 			pawn[i][j]->render(&this->renderTexture, &this->coreShader, pawn[i][j]->getCenter());
 		}
 	}
+}
+
+void GameState::renderGui(sf::RenderTarget* target)
+{
+	if (this->wonTeam == Team::White)
+	{
+		this->textWin.render(target);
+	}
+	else if (this->wonTeam == Team::Black)
+	{
+		this->textLose.render(target);
+	}	
 }
 
 void GameState::render(sf::RenderTarget* target)
@@ -818,6 +858,9 @@ void GameState::render(sf::RenderTarget* target)
 
 	// Fade screen
 	this->fadeScreen->render(&this->renderTexture);
+
+	// Game over
+	this->renderGui(&this->renderTexture);
 
 	// Debug:
 	this->renderFpsCounter(&this->renderTexture);

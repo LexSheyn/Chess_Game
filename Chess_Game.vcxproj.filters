@@ -57,12 +57,6 @@
     <ClCompile Include="State.cpp">
       <Filter>States</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="DropDownList.cpp">
-      <Filter>Gui</Filter>
-    </ClCompile>
     <ClCompile Include="ProgressBar.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
@@ -114,6 +108,15 @@
     <ClCompile Include="Randomizer.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Caption.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="DropDownList.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -127,12 +130,6 @@
     </ClInclude>
     <ClInclude Include="State.h">
       <Filter>States</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="DropDownList.h">
-      <Filter>Gui</Filter>
     </ClInclude>
     <ClInclude Include="ProgressBar.h">
       <Filter>Gui</Filter>
@@ -184,6 +181,15 @@
     </ClInclude>
     <ClInclude Include="Randomizer.h">
       <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Caption.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="DropDownList.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

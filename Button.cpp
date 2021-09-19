@@ -1,16 +1,28 @@
 #include "stdafx.h"
 #include "Button.h"
 
+//Converts a percentage value to pixels relative to current resolution in the X axis.
+//@param	float percent			The percentage value.
+//@param	sf::VideoMode& video_mode	Current video mode of the window (resolution).
+//@return	float				The calculated pixel value.
 const float gui::percentIntoX(const float percent, const sf::VideoMode& video_mode)
 {
 	return std::floor(static_cast<float>(video_mode.width) * (percent / 100.f));
 }
 
+//Converts a percentage value to pixels relative to current resolution in the Y axis.
+//@param	float percent			The percentage value.
+//@param	sf::VideoMode& video_mode	Current video mode of the window (resolution).
+//@return	float				The calculated pixel value.
 const float gui::percentIntoY(const float percent, const sf::VideoMode& video_mode)
 {
 	return std::floor(static_cast<float>(video_mode.height) * (percent / 100.f));
 }
 
+//Calculates the character size for text using the current resolution and a constant.
+//@param	float percent			The percentage value.
+//@param	sf::VideoMode& video_mode	Current video mode of the window (resolution).
+//@return	unsigned			The calculated character size value.
 const unsigned gui::calculateCharSize(const float percent, const sf::VideoMode& video_mode)
 {
 	if (video_mode.width > video_mode.height)
@@ -19,15 +31,17 @@ const unsigned gui::calculateCharSize(const float percent, const sf::VideoMode& 
 	}
 
 	return static_cast<unsigned>(std::floor(static_cast<float>(video_mode.width) * (percent / 100.f)));
+
+	//	return (this->stateData->gfxSettings->resolution.width + this->stateData->gfxSettings->resolution.height) / 100;
 }
 
-// private: Functions:
-
+//private: Functions:
 void gui::Button::initVariables()
 {
 	this->fontSize = 20;
 
 	this->colorNumber = 0;
+	//	this->colorMaxStages = 6;
 
 	this->stepOutline = 0.034f;
 	this->stepButton = 0.1f;
@@ -41,8 +55,7 @@ void gui::Button::initVariables()
 	this->buttonTimerMax = 4.f;
 }
 
-
-// Constructors and Destructor:
+//Constructors and Destructor:
 
 gui::Button::Button
 (
@@ -164,9 +177,9 @@ gui::Button::Button
 		(this->shape.getPosition().y + 1000.f)// + (this->shape.getGlobalBounds().height / 20.f))// - (this->text.getGlobalBounds().height / 2.f)
 	);
 
-	// Colors check:
+	//Colors check:
 
-	//Button
+		//Button
 	if (auto_button_hover_color.r < 60 && auto_button_hover_color.g < 60 && auto_button_hover_color.b < 60)
 	{
 		auto_button_hover_color.r += 130;
@@ -174,19 +187,27 @@ gui::Button::Button
 		auto_button_hover_color.b += 130;
 	}
 
-	// Outline colors:
+	//Text
+//	if (auto_text_hover_color.r < 60 && auto_text_hover_color.g < 60 && auto_text_hover_color.b < 60)
+//	{
+//		auto_text_hover_color.r += 160;
+//		auto_text_hover_color.g += 160;
+//		auto_text_hover_color.b += 160;
+//	}
 
-	// Idle color
+// Outline colors:
+
+	//Idle color
 	this->outlineIdleColor.r = static_cast<uint32_t>(static_cast<float>(auto_outline_hover_color.r) * 0.7f);
 	this->outlineIdleColor.g = static_cast<uint32_t>(static_cast<float>(auto_outline_hover_color.g) * 0.7f);
 	this->outlineIdleColor.b = static_cast<uint32_t>(static_cast<float>(auto_outline_hover_color.b) * 0.7f);
 	this->outlineIdleColor.a = 200;
 
-	// Hover color
+	//Hover color
 	this->outlineHoverColor = auto_outline_hover_color;
 	this->outlineHoverColor.a = 255;
 
-	// Active color
+	//Active color
 	this->outlineActiveColor.r = static_cast<uint32_t>(static_cast<float>(auto_outline_hover_color.r) * 0.4f);
 	this->outlineActiveColor.g = static_cast<uint32_t>(static_cast<float>(auto_outline_hover_color.g) * 0.4f);
 	this->outlineActiveColor.b = static_cast<uint32_t>(static_cast<float>(auto_outline_hover_color.b) * 0.4f);
@@ -194,35 +215,35 @@ gui::Button::Button
 
 	// Button colors:
 
-	// Idle color
+		//Idle color
 	this->buttonIdleColor.r = static_cast<uint32_t>(static_cast<float>(auto_button_hover_color.r) * 0.4f);
 	this->buttonIdleColor.g = static_cast<uint32_t>(static_cast<float>(auto_button_hover_color.g) * 0.4f);
 	this->buttonIdleColor.b = static_cast<uint32_t>(static_cast<float>(auto_button_hover_color.b) * 0.4f);
 	this->buttonIdleColor.a = 200;
 
-	// Hover color
+	//Hover color
 	this->buttonHoverColor = auto_button_hover_color;
 	this->buttonHoverColor.a = 255;
 
-	// Active color
+	//Active color
 	this->buttonActiveColor.r = static_cast<uint32_t>(static_cast<float>(auto_button_hover_color.r) * 0.1f);
 	this->buttonActiveColor.g = static_cast<uint32_t>(static_cast<float>(auto_button_hover_color.g) * 0.1f);
 	this->buttonActiveColor.b = static_cast<uint32_t>(static_cast<float>(auto_button_hover_color.b) * 0.1f);
 	this->buttonActiveColor.a = 200;
 
-	// Text colors:
+	//Text colors:
 
-	// Idle color
+		//Idle color
 	this->textIdleColor.r = static_cast<uint32_t>(static_cast<float>(auto_text_hover_color.r) * 0.7f);
 	this->textIdleColor.g = static_cast<uint32_t>(static_cast<float>(auto_text_hover_color.g) * 0.7f);
 	this->textIdleColor.b = static_cast<uint32_t>(static_cast<float>(auto_text_hover_color.b) * 0.7f);
 	this->textIdleColor.a = 255;
 
-	// Hover color
+	//Hover color
 	this->textHoverColor = auto_text_hover_color;
 	this->textHoverColor.a = 255;
 
-	// Active color
+	//Active color
 	this->textActiveColor.r = static_cast<unsigned>(static_cast<float>(auto_text_hover_color.r) * 0.4f);
 	this->textActiveColor.g = static_cast<unsigned>(static_cast<float>(auto_text_hover_color.g) * 0.4f);
 	this->textActiveColor.b = static_cast<unsigned>(static_cast<float>(auto_text_hover_color.b) * 0.4f);
@@ -277,7 +298,6 @@ gui::Button::~Button()
 
 }
 
-
 // Accessors:
 
 const bool gui::Button::isPressed() const
@@ -300,7 +320,6 @@ const uint32_t& gui::Button::getId() const
 	return this->id;
 }
 
-
 // Modifiers:
 
 void gui::Button::setString(const std::string text)
@@ -312,7 +331,6 @@ void gui::Button::setId(const uint32_t id)
 {
 	this->id = id;
 }
-
 
 // Functions:
 

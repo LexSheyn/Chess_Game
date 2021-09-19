@@ -45,7 +45,7 @@ namespace gui
 	{
 	private:
 
-		// Variables:
+		//Variables:
 
 		ButtonStates buttonState;
 		uint32_t id;
@@ -89,13 +89,13 @@ namespace gui
 		float buttonTimer;
 		float buttonTimerMax;
 
-		// private: Functions:
+		//private: Functions:
 
 		void initVariables();
 
 	public:
 
-		// Constructors and Destructor:
+		//Constructors and Destructor:
 
 		Button
 		(
@@ -119,18 +119,18 @@ namespace gui
 		);
 		virtual ~Button();
 
-		// Accessors:
+		//Accessors:
 
 		const bool isPressed() const;
 		const std::string getString() const;
 		const uint32_t& getId() const;
 
-		// Modifiers:
+		//Modifiers:
 
 		void setString(const std::string str);
 		void setId(const uint32_t id);
 
-		// Fucntions:
+		//Fucntions:
 
 		void update(const sf::Vector2i& mouse_position, bool update_buttons = false, bool update_text = false);
 		void updateButtonColor(const float& dt);
