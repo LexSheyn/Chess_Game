@@ -160,6 +160,7 @@ void MainMenuState::updateButtons(const float& dt)
 	// New game
 	if (this->buttons["GAME_STATE"]->isPressed() && this->getKeyTime())
 	{
+		this->soundEngine->playSound(sfx::Sound::Button_Positive);
 		this->start = true;
 		this->fadeTimer.restart();
 	}
@@ -173,6 +174,7 @@ void MainMenuState::updateButtons(const float& dt)
 	// Quit the game
 	if (this->buttons["EXIT_STATE"]->isPressed() && this->getKeyTime())
 	{
+		this->soundEngine->playSound(sfx::Sound::Button_Negative);
 		this->fadeScreen->fadeOut();
 		this->shutDown = true;
 	}

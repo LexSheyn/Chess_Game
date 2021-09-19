@@ -322,6 +322,8 @@ void GameState::updatePlayerInput(const float& dt)
 		{
 			this->buttonPressed = true;
 			
+			this->soundEngine->playSound(sfx::Sound::Button_Hover);
+
 			bool found = false;
 
 			for (uint32_t i = 0; i < this->figures; i++)
@@ -378,7 +380,8 @@ void GameState::updatePlayerInput(const float& dt)
 
 void GameState::updateInputAI(const float& dt)
 {
-	while(true)
+//	while(true)
+	for (uint8_t attempt = 0; attempt < 100; attempt++)
 	{
 		uint32_t index = this->randomizer.generate(0, this->figures - 1);
 
@@ -463,15 +466,29 @@ void GameState::updatePauseMenuButtons(const float& dt)
 {
 	if (this->pauseMenu->isButtonPressed(gui::ButtonName::Resume))
 	{
-		this->paused = false;
+		if (this->buttonPressed == false)
+		{
+			this->buttonPressed = true;
+
+			this->soundEngine->playSound(sfx::Sound::Button_Positive);
+
+			this->paused = false;
+		}
 	}
-//	else if (this->pauseMenu->isButtonPressed(gui::ButtonName::Settings))
-//	{
-//		//
-//	}
 	else if (this->pauseMenu->isButtonPressed(gui::ButtonName::Quit))
 	{
-		this->gameOver = true;
+		if (this->buttonPressed == false)
+		{
+			this->buttonPressed = true;
+
+			this->soundEngine->playSound(sfx::Sound::Button_Negative);
+
+			this->gameOver = true;
+		}
+	}
+	else
+	{
+		this->buttonPressed = false;
 	}
 }
 
