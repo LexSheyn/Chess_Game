@@ -62,10 +62,10 @@ void State::initFpsCounter()
 {
 	// FPS counter
 	this->fpsCounterText.setFont(this->systemFont);
-	this->fpsCounterText.setCharacterSize(gui::calculateCharSize(3.3f, this->stateData->gfxSettings->resolution));
+	this->fpsCounterText.setCharacterSize(gui::calculateCharSize(2.f, this->stateData->gfxSettings->resolution));
 	this->fpsCounterText.setPosition
 	(
-		gui::percentIntoX(93.f, this->stateData->gfxSettings->resolution),
+		gui::percentIntoX(90.f, this->stateData->gfxSettings->resolution),
 		gui::percentIntoY(2.f, this->stateData->gfxSettings->resolution)
 	);
 }
@@ -86,7 +86,7 @@ State::State(StateData* state_data, gui::FadeScreen* fade_screen, sfx::SoundEngi
 	this->keyTimeMax = 30.f;
 	this->gridSize = state_data->gridSize;
 
-	this->initFont(this->systemFont, "Fonts/PixellettersFull.ttf");
+	this->initFont(this->systemFont, "Fonts/slkscr.ttf");
 
 	this->initMousePositionText();
 	this->initFpsCounter();
